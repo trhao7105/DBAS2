@@ -2,7 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from database import engine, get_db
 from models import Base
-from routers import auth, product, cart, order, admin, user, seller  # thêm user nữa nha
+from routers import auth, product, cart, order, admin, user, seller  
 from utils.security import get_password_hash
 from models import NguoiDung, Admin
 from sqlalchemy.orm import Session

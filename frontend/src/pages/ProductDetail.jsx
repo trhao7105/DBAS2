@@ -36,16 +36,30 @@ export default function ProductDetail() {
   }, [id, currentUser, token, navigate]);
 
   const addToCart = async () => {
-    try {
-      await api.post('/cart/add', 
-        { ProductID: parseInt(id), SoLuong: 1 },
-        { headers: { Authorization: `Bearer ${token}`} }
-      );
-      toast.success('Đã thêm vào giỏ hàng!');
-    } catch {
-      toast.error('Thêm thất bại!');
-    }
-  };
+  try {
+    await api.post('/cart/add', {
+      ProductID: parseInt(id),
+      SoLuong: 1
+    }, {
+      headers: { Authorization: `Bearer ${token}` }
+    });
+
+    toast.success('Đã thêm vào giỏ hàng!', {
+      duration: 3000,
+      style: {
+        background: '#10b981',
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: '18px',
+        borderRadius: '12px',
+      },
+      icon: 'Thành công',
+    });
+  } catch (err) {
+    console.error('Lỗi thêm giỏ:', err); 
+    toast.error('Không thể thêm vào giỏ hàng!');
+  }
+};
 
   const deleteProduct = async () => {
     if (!window.confirm('Xóa sản phẩm này?')) return;

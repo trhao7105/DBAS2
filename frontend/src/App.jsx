@@ -14,9 +14,13 @@ import SellerAddProduct from './pages/SellerAddProduct';
 import EditProduct from './pages/EditProduct';
 import BuyerDashboard from './pages/BuyerDashboard';
 import Products from './pages/Products';
+
+import { Toaster } from 'react-hot-toast';   
+
 function ProtectedRoute({ children, role }) {
   const { user, loading } = useAuth();
-  if (loading) return <div className="flex justify-center items-center h-screen"><div className="text-2xl">Loading...</div></div>;
+  if (loading) 
+    return <div className="flex justify-center items-center h-screen"><div className="text-2xl">Loading...</div></div>;
   if (!user) return <Navigate to="/login" />;
   if (role && user.role !== role) return <Navigate to="/" />;
   return children;
@@ -26,6 +30,9 @@ function App() {
   return (
     <BrowserRouter>
       <AuthProvider>
+        {/* ⭐ TOASTER PHẢI ĐƯỢC ĐẶT Ở ĐÂY */}
+        <Toaster position="top-right" reverseOrder={false} />
+
         <div className="min-h-screen bg-gray-50">
           <Header />
           <Routes>
