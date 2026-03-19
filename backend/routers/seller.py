@@ -122,7 +122,7 @@ async def update_product_route(
     return {
         "message": "Cập nhật sản phẩm thành công!",
         "product_id": product.ProductID,
-        "image_url": f"https://dbas2.onrender.com/uploads/{product.HinhAnh}" if product.HinhAnh else None
+        "image_url": f"https://dbas2.onrender.com/static/images/{product.HinhAnh}" if product.HinhAnh else None
     }
 
 

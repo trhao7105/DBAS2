@@ -83,7 +83,7 @@ export default function ProductDetail() {
         {/* Ảnh – ĐÃ FIX 100% */}
         <div className="relative">
           <img
-            src={`https://dbas2.onrender.com/uploads/${product.HinhAnh}`}
+            src={`https://dbas2.onrender.com/static/images/${product.HinhAnh}`}
             alt={product.TenSanPham}
             className="w-full h-full object-cover"
             onError={(e) => e.target.src = "/placeholder.jpg"}
