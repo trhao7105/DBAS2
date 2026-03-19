@@ -1,16 +1,19 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
+import os
+from dotenv import load_dotenv
 
-SQLALCHEMY_DATABASE_URL = "mysql+pymysql://dbpgf33822889:k7dQ1g42ut#qK5/Boc2OVM2JM@serverless-europe-west3.sysp0000.db2.skysql.com:4048/mydb"
+# Load .env
+load_dotenv()
+
+SQLALCHEMY_DATABASE_URL = os.getenv("DATABASE_URL")
 
 engine = create_engine(
     SQLALCHEMY_DATABASE_URL,
     pool_pre_ping=True,
     connect_args={
-        "ssl": {
-            "ssl": True
-        }
+        "ssl": {"ssl": True}
     }
 )
 
