@@ -6,3 +6,31 @@ python-multipart==0.0.6
 passlib[bcrypt]==1.7.4
 python-jose==3.3.0
 python-dotenv==1.0.1
+
+import java.util.List;
+
+public class SortedList<T extends Comparable<T>> {
+    private SortStrategy<T> strategy;
+    private List<T> items;
+
+    public SortedList(List<T> items, SortStrategy<T> strategy) {
+        this.items = items;
+        this.strategy = strategy;
+    }
+
+    public void setStrategy(SortStrategy<T> strategy) {
+        this.strategy = strategy;
+    }
+
+    public void sort() {
+        strategy.sort(items);
+    }
+
+    public List<T> getItems() {
+        return items;
+    }
+}
+
+
+
+

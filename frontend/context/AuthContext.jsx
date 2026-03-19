@@ -32,7 +32,11 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (data) => {
     try {
-      await api.post('/auth/register', data);
+          await api.post('/auth/register', JSON.stringify(data), {
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
       toast.success('Đăng ký thành công! Hãy đăng nhập');
     } catch (err) {
       toast.error(err.response?.data?.detail || 'Đăng ký thất bại');
