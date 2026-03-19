@@ -54,7 +54,7 @@ async def create_product_route(
     return {
         "message": "Đăng sản phẩm thành công!",
         "product_id": product.ProductID,
-        "image_url": f"http://localhost:8000/uploads/{image_filename}" if image_filename else None
+        "image_url": f"https://dbas2.onrender.com/uploads/{image_filename}" if image_filename else None
     }
 
 # CẬP NHẬT SẢN PHẨM
@@ -122,7 +122,7 @@ async def update_product_route(
     return {
         "message": "Cập nhật sản phẩm thành công!",
         "product_id": product.ProductID,
-        "image_url": f"http://localhost:8000/uploads/{product.HinhAnh}" if product.HinhAnh else None
+        "image_url": f"https://dbas2.onrender.com/uploads/{product.HinhAnh}" if product.HinhAnh else None
     }
 
 
