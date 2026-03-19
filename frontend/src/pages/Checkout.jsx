@@ -58,7 +58,7 @@ export default function Checkout() {
             <div key={item.ProductID} className="flex justify-between items-center py-4 border-b">
               <div className="flex items-center gap-4">
                 <img 
-                  src={`https://dbas2.onrender.com/static/images/${item.HinhAnh}`} 
+                  src={`https://dbas2.onrender.com/uploads/${item.HinhAnh}`} 
                   className="w-16 h-16 object-cover rounded-lg"
                   alt={item.TenSanPham}
                 />
