@@ -129,7 +129,7 @@ async def update_product(
     product = (
         db.query(SanPham)
         .join(DangLen, DangLen.ProductID == SanPham.ProductID)
-        .filter(SanPham.ProductID == product_id, DangLen.SellerID == int(current_user["sub"]))
+        .filter(SanPham.ProductID == product_id, DangLen.SellerID == int(current_user["id"]))
         .first()
     )
     if not product:
