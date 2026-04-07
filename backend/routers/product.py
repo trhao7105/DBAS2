@@ -175,3 +175,20 @@ def delete_product(
     db.delete(product)
     db.commit()
     return {"msg": "Xóa sản phẩm thành công"}
+
+# -------------------SELLER /GET------------------#
+@router.get("/seller/{seller_id}")
+def get_products_by_seller(seller_id: int, db: Session = Depends(get_db)):
+    products = get_my_products(db, seller_id)
+
+    return [
+        {
+            "ProductID": p.ProductID,
+            "TenSanPham": p.TenSanPham,
+            "Gia": float(p.Gia),
+            "SoLuongTon": p.SoLuongTon,
+            "HinhAnh": p.HinhAnh,
+            "MaLoai": p.MaLoai
+        }
+        for p in products
+    ]
