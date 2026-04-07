@@ -6,7 +6,7 @@ from crud.product import create_product, get_all_products, get_my_products
 from crud.user import get_role
 from utils.security import get_current_user
 from datetime import datetime
-from models import SanPham, DangLen, GioHangSanPham, LoaiSanPham
+from models import SanPham, DangLen, GioHangSanPham, LoaiSanPham, NguoiDung
 
 router = APIRouter(tags=["products"])
 
@@ -177,9 +177,12 @@ def delete_product(
     return {"msg": "Xóa sản phẩm thành công"}
 
 # -------------------SELLER /GET------------------#
-@router.get("/seller/{seller_id}")
-def get_products_by_seller(seller_id: int, db: Session = Depends(get_db)):
-    products = get_my_products(db, seller_id)
+@router.get("/my")
+def get_my_products_api(
+    db: Session = Depends(get_db),
+    current_user: NguoiDung = Depends(get_current_user)
+):
+    products = get_my_products(db, current_user.id)
 
     return [
         {

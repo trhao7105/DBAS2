@@ -14,7 +14,7 @@ export default function SellerDashboard() {
         const token = localStorage.getItem('token');
 
         const res = await axios.get(
-          `https://dbas2.onrender.com/products/seller/${user?.id}`,
+          "https://dbas2.onrender.com/products/my",
           {
             headers: {
               Authorization: `Bearer ${token}`
@@ -30,7 +30,7 @@ export default function SellerDashboard() {
       }
     };
 
-    if (user?.id) fetchProducts();
+     fetchProducts();
   }, [user]);
 
   return (
