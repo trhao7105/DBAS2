@@ -88,15 +88,7 @@ export default function SellerDashboard() {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {products.map((p) => (
               <div key={p.ProductID} className="border p-4 rounded-lg">
-                <img
-                  src={
-                    p.HinhAnh
-                      ? `https://dbas2.onrender.com/static/${p.HinhAnh}`
-                      : "https://via.placeholder.com/150"
-                  }
-                  alt={p.TenSanPham}
-                  className="w-full h-40 object-cover mb-3 rounded"
-                />
+                <img src={`https://dbas2.onrender.com/uploads/${product.HinhAnh}`} className="w-full h-64 object-cover rounded-t-lg" alt={product.TenSanPham} />
                 <h3 className="font-bold">{p.TenSanPham}</h3>
                 <p className="text-gray-500">{p.Gia}₫</p>
                 <p className="text-sm text-gray-400">
