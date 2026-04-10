@@ -66,7 +66,7 @@ export default function SellerAddProduct() {
 
     try {
       await axios.post(
-        'https://dbas2.onrender.com/seller/products',
+        'https://dbas2.onrender.com/products/create',
         formData,
         { headers: { Authorization: `Bearer ${token}` } }
       );

@@ -1,14 +1,15 @@
-# backend/routers/seller.py
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File, Form, status
 from sqlalchemy.orm import Session
 from database import get_db
 from utils.security import get_current_user
 from crud.product import create_product
-import shutil
-import os
+import cloudinary
+import cloudinary.uploader
 from datetime import datetime
+
 router = APIRouter(tags=["Seller"])
 
+# -------------------- TẠO SẢN PHẨM --------------------
 @router.post("/products")
 async def create_product_route(
     TenSanPham: str = Form(...),
@@ -23,22 +24,16 @@ async def create_product_route(
     if current_user.get("role") != "seller":
         raise HTTPException(status_code=403, detail="Chỉ seller mới được đăng sản phẩm")
 
-    image_filename = None
-    if HinhAnh and HinhAnh.filename:
-        timestamp = int(datetime.utcnow().timestamp())
-        filename = f"{timestamp}_{HinhAnh.filename}"
-        
-        # ĐƯỜNG DẪN ĐẦY ĐỦ ĐỂ LƯU FILE
-        os.makedirs("static/images", exist_ok=True)
-        full_path = f"static/images/{filename}"
-        
-        with open(full_path, "wb") as f:
-            shutil.copyfileobj(HinhAnh.file, f)
-        
-        # CHỈ LƯU TÊN FILE VÀO DB
-        image_filename = filename
-    else:
-        image_filename = None
+    image_url = None
+    if HinhAnh:
+        try:
+            result = cloudinary.uploader.upload(
+                HinhAnh.file,
+                folder="ecommerce_products"
+            )
+            image_url = result.get("secure_url")
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Lỗi khi upload ảnh: {str(e)}")
 
     product = create_product(
         db=db,
@@ -48,16 +43,17 @@ async def create_product_route(
         gia=Gia,
         so_luong_ton=SoLuongTon,
         ma_loai=MaLoai,
-        hinh_anh=image_filename  # ← CHỈ TÊN FILE!
+        hinh_anh=image_url  # ← TRUYỀN URL CLOUDINARY VÀO ĐÂY
     )
 
     return {
         "message": "Đăng sản phẩm thành công!",
         "product_id": product.ProductID,
-        "image_url": f"https://dbas2.onrender.com/uploads/{image_filename}" if image_filename else None
+        "image_url": image_url
     }
 
-# CẬP NHẬT SẢN PHẨM
+
+# -------------------- CẬP NHẬT SẢN PHẨM --------------------
 @router.put("/products/{product_id}")
 async def update_product_route(
     product_id: int,
@@ -95,26 +91,16 @@ async def update_product_route(
     product.SoLuongTon = SoLuongTon
     product.MaLoai = MaLoai
 
-    # Cập nhật ảnh nếu có
-    if HinhAnh and HinhAnh.filename:
-        timestamp = int(datetime.utcnow().timestamp())
-        filename = f"{timestamp}_{HinhAnh.filename}"
-        os.makedirs("static/images", exist_ok=True)
-        
-        full_path = f"static/images/{filename}"
-        with open(full_path, "wb") as f:
-            shutil.copyfileobj(HinhAnh.file, f)
-        
-        # Xóa ảnh cũ
-        if product.HinhAnh:
-            old_path = f"static/images/{product.HinhAnh}"
-            if os.path.exists(old_path):
-                try:
-                    os.remove(old_path)
-                except:
-                    pass
-        
-        product.HinhAnh = filename  # ← CHỈ LƯU TÊN FILE
+    # Cập nhật ảnh lên Cloudinary nếu có ảnh mới
+    if HinhAnh:
+        try:
+            result = cloudinary.uploader.upload(
+                HinhAnh.file,
+                folder="ecommerce_products"
+            )
+            product.HinhAnh = result.get("secure_url")  # ← CẬP NHẬT URL MỚI
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Lỗi khi upload ảnh: {str(e)}")
 
     db.commit()
     db.refresh(product)
@@ -122,11 +108,11 @@ async def update_product_route(
     return {
         "message": "Cập nhật sản phẩm thành công!",
         "product_id": product.ProductID,
-        "image_url": f"https://dbas2.onrender.com/uploads/{product.HinhAnh}" if product.HinhAnh else None
+        "image_url": product.HinhAnh
     }
 
 
-# XÓA SẢN PHẨM
+# -------------------- XÓA SẢN PHẨM --------------------
 @router.delete("/products/{product_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_product_route(
     product_id: int,
@@ -147,15 +133,10 @@ def delete_product_route(
     if not dang_len_record:
         raise HTTPException(status_code=404, detail="Sản phẩm không tồn tại hoặc không phải của bạn")
 
-    # Xóa sản phẩm (có cascade hoặc xóa thủ công)
     product = db.query(SanPham).filter(SanPham.ProductID == product_id).first()
+    
+    # Xóa sản phẩm
     if product:
-        # Xóa ảnh nếu có
-        if product.HinhAnh and os.path.exists(f"static/images/{product.HinhAnh}"):
-            try:
-                os.remove(f"static/images/{product.HinhAnh}")
-            except:
-                pass
         db.delete(product)
 
     # Xóa bản ghi trong danglen
