@@ -32,7 +32,14 @@ export default function Cart() {
             <div key={item.ProductID} className="bg-white p-6 rounded-lg shadow">
               <div className="flex justify-between items-center">
                 <div className="flex gap-4">
-                  <img src={`https://dbas2.onrender.com/uploads/${item.HinhAnh}`} className="w-20 h-20 object-cover" />
+                  <img 
+                    src={
+                      item.HinhAnh?.startsWith('http') 
+                        ? item.HinhAnh 
+                        : `https://dbas2.onrender.com/uploads/${item.HinhAnh}`
+                    } 
+                    className="w-20 h-20 object-cover" 
+                  />
                   <div>
                     <h3 className="font-semibold">{item.TenSanPham}</h3>
                     <p className="text-red-600 font-bold">{(item.Gia * item.SoLuong).toLocaleString('vi-VN')}đ</p>

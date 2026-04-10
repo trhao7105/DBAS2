@@ -2,8 +2,12 @@ export default function CartItem({ item, onUpdate, onRemove }) {
   return (
     <div className="flex items-center gap-4 bg-white p-4 rounded-lg shadow">
       <img
-        src={`https://dbas2.onrender.com/uploads/${product.HinhAnh}`}
-        alt=""
+        src={
+          item.HinhAnh?.startsWith('http') 
+            ? item.HinhAnh 
+            : `https://dbas2.onrender.com/uploads/${item.HinhAnh}`
+        }
+        alt={item.TenSanPham}
         className="w-24 h-24 object-cover rounded"
       />
       <div className="flex-1">
