@@ -92,14 +92,15 @@ async def create(
     if get_role(db, int(current_user["id"])) != "seller":
         raise HTTPException(403, "Chỉ người bán mới được đăng sản phẩm")
 
-    filename = None
+    image_url = None # SỬA TÊN BIẾN Ở ĐÂY THÀNH image_url
+    
     if HinhAnh:
         try:
             result = cloudinary.uploader.upload(
                 HinhAnh.file, 
-                folder="ecommerce_products" # Bạn có thể đổi tên thư mục tùy ý
+                folder="ecommerce_products" 
             )
-            image_url = result.get("secure_url") # Lấy link ảnh an toàn (https)
+            image_url = result.get("secure_url") 
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Lỗi khi upload ảnh: {str(e)}")
 
@@ -111,7 +112,7 @@ async def create(
         gia=Gia,
         so_luong_ton=SoLuongTon,
         ma_loai=MaLoai,
-        hinh_anh=filename
+        hinh_anh=image_url 
     )
     return {"msg": "Đăng sản phẩm thành công", "product_id": product.ProductID}
 
