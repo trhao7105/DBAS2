@@ -7,7 +7,8 @@ from crud.user import get_role
 from utils.security import get_current_user
 from datetime import datetime
 from models import SanPham, DangLen, GioHangSanPham, LoaiSanPham, NguoiDung
-
+import cloudinary
+import cloudinary.uploader
 router = APIRouter(tags=["products"])
 
 # -------------------- CATEGORIES --------------------
@@ -93,9 +94,14 @@ async def create(
 
     filename = None
     if HinhAnh:
-        filename = f"uploads/{datetime.now().strftime('%Y%m%d%H%M%S')}_{HinhAnh.filename}"
-        with open(f"static/{filename}", "wb") as f:
-            f.write(await HinhAnh.read())
+        try:
+            result = cloudinary.uploader.upload(
+                HinhAnh.file, 
+                folder="ecommerce_products" # Bạn có thể đổi tên thư mục tùy ý
+            )
+            image_url = result.get("secure_url") # Lấy link ảnh an toàn (https)
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Lỗi khi upload ảnh: {str(e)}")
 
     product = create_product(
         db=db,
@@ -142,10 +148,14 @@ async def update_product(
     product.MaLoai = MaLoai
 
     if HinhAnh:
-        filename = f"uploads/{datetime.now().strftime('%Y%m%d%H%M%S')}_{HinhAnh.filename}"
-        with open(f"static/{filename}", "wb") as f:
-            f.write(await HinhAnh.read())
-        product.HinhAnh = filename
+        try:
+            result = cloudinary.uploader.upload(
+                HinhAnh.file, 
+                folder="ecommerce_products"
+            )
+            product.HinhAnh = result.get("secure_url") # Cập nhật DB với link URL mới
+        except Exception as e:
+            raise HTTPException(status_code=500, detail=f"Lỗi khi upload ảnh: {str(e)}")
 
     db.commit()
     db.refresh(product)
